@@ -1,0 +1,11 @@
+import wollok.game.*
+import pepita.*
+
+program juego {
+  game.addVisualCharacter(pepita)
+  game.addVisual(silvestre)
+  game.boardGround("fondo.jpg")
+  game.cellSize(100)
+  game.start()
+}
+
