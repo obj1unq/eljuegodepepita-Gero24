@@ -43,11 +43,12 @@ object silvestre {
 		if (xPresa > xSilvestre) {
 			self.mover(derecha)
 		} else {
-			if ((xPresa < xSilvestre) && (xSilvestre > 3)) self.mover(izquierda)
+			if ((xPresa < xSilvestre) && self.puedeMoverseALIzquierda()) self.mover(izquierda)
 		}
-
 	}
-
+	
+	method puedeMoverseALIzquierda() = self.position().x() > 3
+	
 	method mover(direccion) {
 		position = direccion.moverDesde(position)
 	}
