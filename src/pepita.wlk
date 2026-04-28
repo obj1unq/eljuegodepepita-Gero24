@@ -1,42 +1,54 @@
 import wollok.game.*
-
+import direcciones.*
 
 object pepita {
-	var property position = game.at(2,3)
+	var property position = game.at(2, 3)
 	var energia = 100
-
-	method image() = "pepita.png" 
-
-	method comer(comida) {
-		energia = energia + comida.energiaQueOtorga()
-	}
-
-	method volar(kms) {
-		energia = energia - 10 - kms 
+	
+	method image() {
+		if (self.estaAtrapada()) {
+			return "pepita-gris.png"
+		} else {
+			return "pepita.png"
+		}
 	}
 	
-	method energia() {
-		return energia
+	method comer(comida) {
+		energia += comida.energiaQueOtorga()
 	}
-
+	
+	method volar(kms) {
+		energia = (energia - 10) - kms
+	}
+	
+	method energia() = energia
+	
+	method estaAtrapada() = self.position() == silvestre.position()
+	
+	method mover(direccion) {
+		position = direccion.moverDesde(position)
+	}
 }
 
 object silvestre {
+	var property presa = pepita
+	var property position = game.at(3, 0)
 	
-	method position() = game.at(pepita.position().x(), 0)
-
 	method image() = "silvestre.png"
-
-	/* method perseguirA(pepita) {
-		const pepitaCoordenadaX = pepita.position().x()
-		const silvestreCoordinadaX = self.position().x()
-
-		if (pepitaCoordenadaX > silvestreCoordinadaX) {
-			position = position.right(1)
-		} else if (pepitaCoordenadaX < silvestreCoordinadaX) {
-			position = position.left(1)
-		}
-	} 
-	*/
 	
+	method perseguir() {
+		const xPresa = presa.position().x()
+		const xSilvestre = self.position().x()
+		
+		if (xPresa > xSilvestre) {
+			self.mover(derecha)
+		} else {
+			if ((xPresa < xSilvestre) && (xSilvestre > 3)) self.mover(izquierda)
+		}
+
+	}
+
+	method mover(direccion) {
+		position = direccion.moverDesde(position)
+	}
 }
