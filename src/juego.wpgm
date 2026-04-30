@@ -1,18 +1,30 @@
 import wollok.game.*
 import pepita.*
 import direcciones.*
+import extras.*
 
 program juego {
   game.addVisual(pepita)
   game.addVisual(silvestre)
+  game.addVisual(manzana)
   game.boardGround("fondo.jpg")
   game.cellSize(100)
   game.width(10)
   game.height(10)
-  keyboard.up().onPressDo { pepita.mover(arriba) }
-  keyboard.down().onPressDo { pepita.mover(abajo) }
-  keyboard.left().onPressDo { pepita.mover(izquierda) }
-  keyboard.right().onPressDo { pepita.mover(derecha) }
-  game.onTick(500, "silvestre persigue", { => silvestre.perseguir() })
+  keyboard.up().onPressDo({ pepita.mover(arriba) })
+  keyboard.down().onPressDo({ pepita.mover(abajo) })
+  keyboard.left().onPressDo({ pepita.mover(izquierda) })
+  keyboard.right().onPressDo({ pepita.mover(derecha) })
+  game.onTick(500, "silvestre persigue", { silvestre.perseguir() })
+  keyboard.c().onPressDo(
+    { 
+      const comida = game.uniqueCollider(pepita)
+      pepita.comer(comida)
+      game.removeVisual(comida)
+    }
+  )
+  
+  
+  
   game.start()
 }

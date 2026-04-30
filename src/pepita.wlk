@@ -3,31 +3,53 @@ import direcciones.*
 
 object pepita {
 	var property position = game.at(2, 3)
+	var estado = viva
 	var energia = 100
 	
-	method image() {
-		if (self.estaAtrapada()) {
-			return "pepita-gris.png"
-		} else {
-			return "pepita.png"
-		}
-	}
+	method image() = estado.image()
 	
 	method comer(comida) {
 		energia += comida.energiaQueOtorga()
+		self.actualizarEstado()
 	}
 	
 	method volar(kms) {
-		energia = (energia - 10) - kms
+		energia = energia - (9 * kms)
 	}
 	
 	method energia() = energia
 	
+	method actualizarEstado() {
+		if (energia <= 0 || self.estaAtrapada()) {
+			estado = muerta
+		} else {
+			estado = viva
+		}
+	}
+	
 	method estaAtrapada() = self.position() == silvestre.position()
 	
 	method mover(direccion) {
-		position = direccion.moverDesde(position)
+		if (estado.puedeMoverse()) {
+			const posicionAnterior = position
+			const posicionNueva = direccion.moverDesde(posicionAnterior)
+			self.volar(posicionAnterior.distance(posicionNueva))
+			position = posicionNueva
+			self.actualizarEstado()
+		}
 	}
+}
+
+object muerta {
+	method image() = "pepita-gris.png"
+
+	method puedeMoverse() = false
+}
+
+object viva {
+	method image() = "pepita.png"
+	
+	method puedeMoverse() = true
 }
 
 object silvestre {
@@ -51,5 +73,6 @@ object silvestre {
 	
 	method mover(direccion) {
 		position = direccion.moverDesde(position)
+		presa.actualizarEstado()
 	}
 }

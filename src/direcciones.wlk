@@ -1,5 +1,7 @@
+import pepita.*
 object arriba {
   method moverDesde(unaPosicion) = unaPosicion.up(1)
+
 }
 
 object abajo {
