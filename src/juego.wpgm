@@ -1,30 +1,52 @@
 import wollok.game.*
 import pepita.*
 import direcciones.*
+import comidas.*
 import extras.*
 
+object configuradorJuego {
+    
+  method configurarNivel() {
+    game.width(10)
+    game.height(10)
+    game.cellSize(100)
+    game.boardGround("fondo.jpg")
+    
+    game.addVisual(pepita)
+    game.addVisual(silvestre)
+    game.addVisual(manzana)
+    
+    muros.posicionesMuros().forEach { muro => game.addVisual(muro) }
+
+    
+  }
+  
+  method configurarControles() {
+    keyboard.up().onPressDo({ pepita.mover(arriba) })
+    keyboard.down().onPressDo({ pepita.mover(abajo) })
+    keyboard.left().onPressDo({ pepita.mover(izquierda) })
+    keyboard.right().onPressDo({ pepita.mover(derecha) })
+    
+    keyboard.c().onPressDo(
+      { if (game.colliders(pepita).contains(manzana)) {
+          pepita.comer(manzana)
+          game.removeVisual(manzana)
+        } }
+    )
+    
+    keyboard.r().onPressDo({pepita.reiniciar() silvestre.reiniciar()})
+  }
+  
+  method configurarDinamica() {
+    game.onTick(500, "silvestre persigue", { silvestre.perseguir() })
+    game.onTick(800, "gravedad", { pepita.descender() })
+  }
+}
+
 program juego {
-  game.addVisual(pepita)
-  game.addVisual(silvestre)
-  game.addVisual(manzana)
-  game.boardGround("fondo.jpg")
-  game.cellSize(100)
-  game.width(10)
-  game.height(10)
-  keyboard.up().onPressDo({ pepita.mover(arriba) })
-  keyboard.down().onPressDo({ pepita.mover(abajo) })
-  keyboard.left().onPressDo({ pepita.mover(izquierda) })
-  keyboard.right().onPressDo({ pepita.mover(derecha) })
-  game.onTick(500, "silvestre persigue", { silvestre.perseguir() })
-  keyboard.c().onPressDo(
-    { 
-      const comida = game.uniqueCollider(pepita)
-      pepita.comer(comida)
-      game.removeVisual(comida)
-    }
-  )
-  
-  
+  configuradorJuego.configurarNivel()
+  configuradorJuego.configurarControles()
+  configuradorJuego.configurarDinamica()
   
   game.start()
 }
