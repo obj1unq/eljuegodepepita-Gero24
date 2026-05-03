@@ -1,0 +1,64 @@
+import wollok.game.*
+import pepita.*
+import direcciones.*
+import comidas.*
+import extras.*
+
+object configuradorJuego {
+    
+  method configurarNivel() {
+    game.width(10)
+    game.height(10)
+    game.cellSize(100)
+    game.boardGround("fondo.jpg")
+    
+    game.addVisual(pepita)
+    game.addVisual(silvestre)
+    game.addVisual(manzana)
+    game.addVisual(nido)
+    
+    muros.listaMuros().forEach { muro => game.addVisual(muro) }
+
+  }
+  
+  method configurarControles() {
+    keyboard.up().onPressDo({ pepita.mover(arriba) })
+    keyboard.down().onPressDo({ pepita.mover(abajo) })
+    keyboard.left().onPressDo({ pepita.mover(izquierda) })
+    keyboard.right().onPressDo({ pepita.mover(derecha) })
+    
+    keyboard.r().onPressDo({pepita.reiniciar() silvestre.reiniciar()})
+  }
+  
+  method configurarDinamica() {
+    game.onTick(500, "silvestre persigue", { silvestre.perseguir() })
+    game.onTick(800, "gravedad", { pepita.descender() })
+
+    game.onCollideDo(nido, { elemento =>
+      self.terminarJuegoConMensaje("¡GANE!")
+    })
+
+    game.onCollideDo(silvestre, { elemento =>
+      pepita.morir()
+      self.terminarJuegoConMensaje("¡PERDI!")
+    })
+    
+    game.onCollideDo(manzana, { elemento =>
+      pepita.comer(manzana)
+      game.removeVisual(manzana)
+    })
+  }
+
+  method terminarJuegoConMensaje(mensaje) {
+    game.say(pepita, mensaje)
+      game.schedule(2000, { game.stop() })
+  }
+}
+
+program juego {
+  configuradorJuego.configurarNivel()
+  configuradorJuego.configurarControles()
+  configuradorJuego.configurarDinamica()
+  
+  game.start()
+}
