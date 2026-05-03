@@ -15,10 +15,10 @@ object configuradorJuego {
     game.addVisual(pepita)
     game.addVisual(silvestre)
     game.addVisual(manzana)
+    game.addVisual(nido)
     
-    muros.posicionesMuros().forEach { muro => game.addVisual(muro) }
+    muros.listaMuros().forEach { muro => game.addVisual(muro) }
 
-    
   }
   
   method configurarControles() {
@@ -27,19 +27,31 @@ object configuradorJuego {
     keyboard.left().onPressDo({ pepita.mover(izquierda) })
     keyboard.right().onPressDo({ pepita.mover(derecha) })
     
-    keyboard.c().onPressDo(
-      { if (game.colliders(pepita).contains(manzana)) {
-          pepita.comer(manzana)
-          game.removeVisual(manzana)
-        } }
-    )
-    
     keyboard.r().onPressDo({pepita.reiniciar() silvestre.reiniciar()})
   }
   
   method configurarDinamica() {
     game.onTick(500, "silvestre persigue", { silvestre.perseguir() })
     game.onTick(800, "gravedad", { pepita.descender() })
+
+    game.onCollideDo(nido, { elemento =>
+      self.terminarJuegoConMensaje("¡GANE!")
+    })
+
+    game.onCollideDo(silvestre, { elemento =>
+      pepita.morir()
+      self.terminarJuegoConMensaje("¡PERDI!")
+    })
+    
+    game.onCollideDo(manzana, { elemento =>
+      pepita.comer(manzana)
+      game.removeVisual(manzana)
+    })
+  }
+
+  method terminarJuegoConMensaje(mensaje) {
+    game.say(pepita, mensaje)
+      game.schedule(2000, { game.stop() })
   }
 }
 

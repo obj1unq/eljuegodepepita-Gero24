@@ -47,15 +47,17 @@ object pepita {
 		self.actualizarEstado()
 	}
 	
+	method morir() {
+		estado = muerta
+	}
+
 	method actualizarEstado() {
-		if ((energia <= 0) || self.estaAtrapada()) {
+		if ((energia <= 0)) {
 			estado = muerta
 		} else {
 			estado = viva
 		}
 	}
-	
-	method estaAtrapada() = self.position() == silvestre.position()
 	
 	method reiniciar() {
 		position = game.at(2, 3)
@@ -86,7 +88,6 @@ object silvestre {
 	
 	method mover(direccion) {
 		position = direccion.moverDesde(position)
-		presa.actualizarEstado()
 	}
 	
 	method perseguir() {
@@ -96,9 +97,7 @@ object silvestre {
 		if (xPresa > xSilvestre) {
 			self.mover(derecha)
 		} else {
-			if ((xPresa < xSilvestre) && self.puedeMoverseALIzquierda()) self.mover(
-					izquierda
-				)
+			if ((xPresa < xSilvestre) && self.puedeMoverseALIzquierda()) self.mover(izquierda)
 		}
 	}
 	

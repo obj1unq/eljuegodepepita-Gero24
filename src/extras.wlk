@@ -8,7 +8,7 @@ class Muro {
 
 object muros {
   
-  const posicionesMuros = [
+  const listaMuros = [
     new Muro(position = game.at(0, 1)),
     new Muro(position = game.at(0, 2)),
     new Muro(position = game.at(0, 3)),
@@ -29,7 +29,14 @@ object muros {
     new Muro(position = game.at(9, 9))
   ]
 
-  method posicionesMuros() = posicionesMuros
+  method listaMuros() = listaMuros
 
-  method hayMuroEn(posicion) = posicionesMuros.any { muro => muro.position() == posicion} 
+  method hayMuroEn(posicion) = listaMuros.any { muro => muro.position() == posicion} 
+}
+
+object nido {
+  
+  var property position = game.at(6,6)
+
+  method image() = "nido.png" 
 }
